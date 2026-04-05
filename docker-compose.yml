@@ -8,6 +8,8 @@ services:
       - REPO=<owner>/<repo>
       - REG_TOKEN=<reg-token-for-self-hosted-runner>
       - NAME=<runner-name>
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:

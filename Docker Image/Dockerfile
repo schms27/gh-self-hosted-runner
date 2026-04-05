@@ -12,7 +12,7 @@ RUN useradd -m docker
 # Install necessary packages
 RUN apt install -y --no-install-recommends \
     curl build-essential libssl-dev libffi-dev python3 python3-venv python3-dev python3-pip jq \
-    git ca-certificates gnupg
+    git ca-certificates gnupg gosu
 RUN apt-get -yqq install ssh
 
 # Go
@@ -46,11 +46,8 @@ RUN cd /home/docker && mkdir actions-runner && cd actions-runner \
 # Change ownership to docker user and install dependencies
 RUN chown -R docker /home/docker && /home/docker/actions-runner/bin/installdependencies.sh
 
-# Copy the start script and make it executable
+# Copy scripts — entrypoint runs as root to fix socket GID, then drops to docker user
 COPY --chmod=+x start.sh /start.sh
+COPY --chmod=+x entrypoint.sh /entrypoint.sh
 
-# Switch to docker user
-USER docker
-
-# Define the entrypoint
-ENTRYPOINT ["/start.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
