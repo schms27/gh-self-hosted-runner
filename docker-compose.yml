@@ -12,13 +12,12 @@ services:
       - TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - go-mod-cache:/home/docker/go/pkg/mod
+      - go-build-cache:/home/docker/.cache/go-build
     deploy:
       mode: replicated
-      replicas: 2
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
-        reservations:
-          cpus: '0.4'
-          memory: 256M
+      replicas: 1
+
+volumes:
+  go-mod-cache:
+  go-build-cache:
