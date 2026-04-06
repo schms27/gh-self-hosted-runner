@@ -14,8 +14,9 @@ fi
 # /home/docker/.cache ends up root-owned when go-build-cache is mounted
 # at /home/docker/.cache/go-build — which blocks golangci-lint from
 # creating /home/docker/.cache/golangci-lint.
-mkdir -p /home/docker/.cache /home/docker/go
-chown docker:docker /home/docker/.cache /home/docker/go
+mkdir -p /home/docker/.cache/go-build /home/docker/go/pkg/mod
+chown docker:docker /home/docker/.cache /home/docker/.cache/go-build \
+                    /home/docker/go /home/docker/go/pkg /home/docker/go/pkg/mod
 
 # Drop privileges and run the runner as the docker user.
 # gosu preserves environment variables (unlike su).
