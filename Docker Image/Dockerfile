@@ -24,6 +24,10 @@ ENV GOPATH="/home/docker/go"
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs
 
+# Playwright / Chromium system dependencies — installed at image build time so
+# CI steps can run `npx playwright install chromium` without needing root.
+RUN npx --yes playwright@1.59.1 install-deps chromium
+
 # Docker CLI (communicates with host daemon via mounted socket)
 RUN install -m 0755 -d /etc/apt/keyrings \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
