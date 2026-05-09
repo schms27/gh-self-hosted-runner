@@ -5,8 +5,19 @@ set -e
 # The GID baked into the image almost never matches the host's docker group GID.
 if [ -S /var/run/docker.sock ]; then
     SOCKET_GID=$(stat -c '%g' /var/run/docker.sock)
-    groupmod -g "$SOCKET_GID" docker 2>/dev/null || groupadd -g "$SOCKET_GID" docker
-    usermod -aG docker docker
+
+    # Check if the docker group already has the correct GID
+    CURRENT_GID=$(getent group docker | cut -d: -f3 || true)
+    if [ "$CURRENT_GID" != "$SOCKET_GID" ]; then
+        # If another group already owns the socket's GID, add the docker user to it.
+        # Otherwise, change the existing docker group's GID to match.
+        if getent group "$SOCKET_GID" >/dev/null 2>&1; then
+            SOCKET_GROUP=$(getent group "$SOCKET_GID" | cut -d: -f1)
+            usermod -aG "$SOCKET_GROUP" docker
+        else
+            groupmod -g "$SOCKET_GID" docker
+        fi
+    fi
 fi
 
 # Ensure the docker user owns its home cache dir.
