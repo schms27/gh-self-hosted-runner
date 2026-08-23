@@ -33,6 +33,7 @@ CONFIG_TOKEN="$(get_runner_token registration)"
   --token "${CONFIG_TOKEN}" \
   --name "${NAME}" \
   --unattended \
+  --disableupdate \
   --replace
 
 cleanup() {
